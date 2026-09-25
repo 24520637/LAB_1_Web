@@ -634,6 +634,37 @@ h6 {
   color: var(--color-background);
 }
 
+.state-message {
+  display: grid;
+  gap: var(--space-sm);
+  min-width: 0;
+  padding: var(--space-lg);
+  border: var(--border-width) solid var(--color-border);
+  border-radius: var(--border-radius-md);
+  background-color: var(--color-surface-raised);
+}
+
+.error-state {
+  border-color: var(--color-primary);
+  background-color: var(--color-surface);
+}
+
+.retry-button {
+  width: fit-content;
+  padding: var(--space-sm) var(--space-md);
+  border: var(--border-width) solid var(--color-primary);
+  border-radius: var(--border-radius-full);
+  background-color: var(--color-primary);
+  color: var(--color-background);
+  font-weight: var(--font-weight-medium);
+  cursor: pointer;
+}
+
+.retry-button:hover {
+  background-color: var(--color-primary-hover);
+  border-color: var(--color-primary-hover);
+}
+
 .skeleton {
   display: block;
   background: linear-gradient(

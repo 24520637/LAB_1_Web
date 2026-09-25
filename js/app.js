@@ -32,6 +32,7 @@ if (themeToggle) {
 }
 
 const portfolioContent = document.querySelector("#portfolio-content");
+const projectSection = document.querySelector("#projects");
 
 const projectData = [
   {
@@ -81,6 +82,83 @@ function renderLiveProjects() {
     .join("");
 }
 
-if (portfolioContent) {
-  window.setTimeout(renderLiveProjects, 900);
+function renderLoadingState() {
+  if (!portfolioContent) return;
+
+  portfolioContent.innerHTML = [
+    "<li class='skeleton-card' aria-hidden='true'><span class='skeleton skeleton-avatar'></span><span class='skeleton skeleton-title'></span><span class='skeleton skeleton-text'></span><span class='skeleton skeleton-text'></span><span class='skeleton skeleton-text-short'></span></li>",
+    "<li class='skeleton-card' aria-hidden='true'><span class='skeleton skeleton-avatar'></span><span class='skeleton skeleton-title'></span><span class='skeleton skeleton-text'></span><span class='skeleton skeleton-text-short'></span></li>",
+  ].join("");
+}
+
+function renderEmptyState() {
+  if (!portfolioContent) return;
+
+  portfolioContent.innerHTML = `
+    <li class="state-message empty-state" role="status">
+      <h3>No projects available.</h3>
+      <p>There are no portfolio projects to show right now.</p>
+    </li>
+  `;
+}
+
+function renderErrorState() {
+  if (!portfolioContent) return;
+
+  portfolioContent.innerHTML = `
+    <li class="state-message error-state" role="alert">
+      <h3>Something went wrong.</h3>
+      <p>We couldn't load the projects. Please try again.</p>
+      <button type="button" class="retry-button">Try again</button>
+    </li>
+  `;
+}
+
+function setPortfolioState(state) {
+  if (!portfolioContent || !projectSection) return;
+
+  projectSection.dataset.state = state;
+
+  switch (state) {
+    case "loading":
+      renderLoadingState();
+      break;
+    case "empty":
+      renderEmptyState();
+      break;
+    case "error":
+      renderErrorState();
+      break;
+    case "live":
+      renderLiveProjects();
+      break;
+    default:
+      renderErrorState();
+      projectSection.dataset.state = "error";
+  }
+}
+
+window.portfolioStateController = {
+  setState: setPortfolioState,
+  states: ["loading", "live", "empty", "error"],
+};
+
+if (portfolioContent && projectSection) {
+  setPortfolioState("loading");
+
+  window.setTimeout(() => {
+    setPortfolioState("live");
+  }, 900);
+
+  portfolioContent.addEventListener("click", (event) => {
+    const retryButton = event.target.closest(".retry-button");
+
+    if (!retryButton) return;
+
+    setPortfolioState("loading");
+
+    window.setTimeout(() => {
+      setPortfolioState("live");
+    }, 800);
+  });
 }
