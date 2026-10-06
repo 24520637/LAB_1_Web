@@ -1978,21 +1978,40 @@ Test the complete page flow, including:
 * [ ] Focus returns to a logical location after dynamic actions.
 * [ ] Full keyboard flow passes from start to end of the page.
 
-### Mandatory Pre-Commit Test Checklist
+### Mandatory Pre-Commit Keyboard Accessibility Test Checklist
 
-| Shortcut            | Test                     | Expected Result                                    |
-| ------------------- | ------------------------ | -------------------------------------------------- |
-| `Tab`               | Navigate forward         | Every interactive element receives focus           |
-| `Shift + Tab`       | Navigate backward        | Focus moves backward logically                     |
-| `Enter`             | Activate links/buttons   | Correct action is triggered                        |
-| `Space`             | Activate buttons/toggles | Correct action is triggered                        |
-| `Tab`               | Test Skip-link           | Skip-link receives focus and jumps to main content |
-| `Tab + Enter/Space` | Theme toggle             | Theme changes correctly                            |
-| `Tab + Enter/Space` | Card Retry               | Retry action works correctly                       |
-| Any key             | Check focus              | No Focus Trap / stuck focus                        |
-| All steps           | Check outline            | Focus indicator remains clearly visible            |
+| Test                  | Keyboard Input              | Expected Result                                                                                        |
+| --------------------- | --------------------------- | ------------------------------------------------------------------------------------------------------ |
+| Sequential navigation | `Tab`                       | Focus moves through all interactive elements in logical order.                                         |
+| Reverse navigation    | `Shift + Tab`               | Focus moves backward through interactive elements without skipping or trapping.                        |
+| Skip-link             | `Tab` → `Enter`             | Skip-link receives focus and moves focus to `<main>`.                                                  |
+| Links                 | `Enter`                     | Link activates its intended destination/action.                                                        |
+| Buttons               | `Enter`                     | Button triggers its intended action.                                                                   |
+| Buttons / toggles     | `Space`                     | Button or toggle activates correctly.                                                                  |
+| Theme toggle          | `Tab` → `Enter` / `Space`   | Theme changes correctly and focus remains visible.                                                     |
+| Card Retry button     | `Tab` → `Enter` / `Space`   | Retry action executes correctly.                                                                       |
+| Composite widgets     | `Arrow Keys`                | Focus/selection moves according to the widget pattern (e.g., tabs/radio groups).                       |
+| Dismissible overlay   | `Escape`                    | Overlay closes when dismissible.                                                                       |
+| Focus restoration     | Close overlay → check focus | Focus returns to the element that opened the overlay.                                                  |
+| Focus visibility      | `Tab` / `Shift + Tab`       | A clear focus outline is always visible and is never removed.                                          |
+| Focus trap            | `Tab` / `Shift + Tab`       | Focus never becomes permanently trapped inside an element or component.                                |
+| Full-page walkthrough | `F5` → `Tab`                | Complete keyboard-only flow works from the beginning to the end of the page without mouse interaction. |
 
-**Pre-commit rule:** Complete the keyboard audit → fix failures → re-test the entire flow → commit only after all checks pass.
+#### Pre-Commit Validation
+
+* [ ] Perform the complete test using **keyboard only**; do not use the mouse.
+* [ ] Verify `Tab` / `Shift + Tab` navigation across the entire page.
+* [ ] Verify `Enter` behavior separately for links and buttons.
+* [ ] Verify `Space` behavior for buttons and toggle controls.
+* [ ] Verify Arrow-key behavior for applicable composite widgets.
+* [ ] Verify `Escape` closes all applicable dismissible overlays.
+* [ ] Verify focus is restored after closing an overlay.
+* [ ] Verify focus indicators remain clearly visible in both Light and Dark themes.
+* [ ] Verify there are no keyboard Focus Traps.
+* [ ] Fix all failures and repeat the complete keyboard walkthrough before committing.
+
+**Rule:** Test → Identify defect → Fix → Re-test → Commit. Never commit before the complete keyboard accessibility checklist passes.
+
 
 ### Exact Git Commit
 
