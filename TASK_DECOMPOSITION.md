@@ -1937,6 +1937,7 @@ The task includes:
 git add .
 git commit -m "fix(a11y): contrast & landmarks"
 ```
+
 # WBS Task M2 — Focus Trap Audit & Keyboard Navigation
 
 ### Task ID
@@ -2004,11 +2005,7 @@ Test the complete page flow, including:
 * [ ] Verify `Enter` behavior separately for links and buttons.
 * [ ] Verify `Space` behavior for buttons and toggle controls.
 * [ ] Verify Arrow-key behavior for applicable composite widgets.
-* [ ] Verify `Escape` closes all applicable dismissible overlays.
-* [ ] Verify focus is restored after closing an overlay.
-* [ ] Verify focus indicators remain clearly visible in both Light and Dark themes.
-* [ ] Verify there are no keyboard Focus Traps.
-* [ ] Fix all failures and repeat the complete keyboard walkthrough before committing.
+* [ ] Verify `Escape` closes
 
 **Rule:** Test → Identify defect → Fix → Re-test → Commit. Never commit before the complete keyboard accessibility checklist passes.
 
@@ -2019,7 +2016,6 @@ Test the complete page flow, including:
 git add .
 git commit -m "fix(nav): keyboard trap prevention"
 ```
-
 # WBS Task M3 — Strict Security Policy & Event Handling
 
 ### Task ID

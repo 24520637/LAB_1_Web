@@ -1,6 +1,6 @@
 /* =========================================================
    Enterprise Developer Portfolio
-   M1 — WCAG 2.2 AA Contrast & Semantic Landmark Support
+   M2 — Keyboard Focus Trap Prevention
    ========================================================= */
 
 /* =========================================================
@@ -12,11 +12,9 @@
   --color-surface: #f5f7fa;
   --color-surface-raised: #ffffff;
 
-  /* WCAG AA: text/background combinations are >= 4.5:1 */
   --color-text: #111827;
   --color-text-muted: #4b5563;
 
-  /* Link contrast on white: approximately 5.98:1 */
   --color-primary: #005fcc;
   --color-primary-hover: #004a9f;
 
@@ -57,7 +55,6 @@
   --space-3xl: 4rem;
 
   --container-max-width: 72rem;
-  --content-width: 100%;
 
   --border-width: 1px;
   --border-radius-sm: 0.25rem;
@@ -85,11 +82,9 @@
   --color-surface: #1f2937;
   --color-surface-raised: #374151;
 
-  /* WCAG AA: high-contrast text */
   --color-text: #f9fafb;
   --color-text-muted: #d1d5db;
 
-  /* Contrast on dark background: approximately 6.98:1 */
   --color-primary: #60a5fa;
   --color-primary-hover: #93c5fd;
 
@@ -140,6 +135,7 @@ h4,
 h5,
 h6 {
   margin: 0;
+
   font-weight: var(--font-weight-bold);
   line-height: var(--line-height-tight);
 }
@@ -189,6 +185,8 @@ button {
   color: #ffffff;
   background-color: #005fcc;
 
+  text-decoration: none;
+
   transform: translateY(-150%);
   transition: transform var(--transition-fast);
 }
@@ -205,6 +203,7 @@ button {
 a,
 a:visited {
   color: var(--color-primary);
+
   text-decoration: underline;
   text-underline-offset: 0.15em;
 }
@@ -215,14 +214,56 @@ a:hover {
 
 
 /* =========================================================
-   FOCUS INDICATOR — WCAG
+   KEYBOARD FOCUS INDICATOR
    ========================================================= */
 
-:focus {
-  outline: none;
-}
+/*
+ * Do NOT use:
+ *
+ * :focus {
+ *   outline: none;
+ * }
+ *
+ * Removing the outline globally can hide keyboard focus.
+ *
+ * :focus-visible provides a clear indicator for keyboard users.
+ */
 
 :focus-visible {
+  outline:
+    var(--focus-width)
+    solid
+    var(--color-focus);
+
+  outline-offset: var(--focus-offset);
+}
+
+
+/*
+ * Explicit focus styling for the main keyboard controls.
+ */
+
+a:focus-visible,
+button:focus-visible {
+  outline:
+    var(--focus-width)
+    solid
+    var(--color-focus);
+
+  outline-offset: var(--focus-offset);
+}
+
+
+/*
+ * Main and section headings may receive programmatic focus
+ * after Skip-link or dynamic content updates.
+ *
+ * They are not part of the normal Tab sequence because
+ * tabindex="-1" is used in HTML.
+ */
+
+main:focus-visible,
+#projects-heading:focus-visible {
   outline:
     var(--focus-width)
     solid
@@ -699,8 +740,6 @@ h6 {
 .project-badge--status {
   background-color: var(--color-primary);
   border-color: var(--color-primary);
-
-  /* White/dark-theme text maintains strong contrast */
   color: var(--color-background);
 }
 

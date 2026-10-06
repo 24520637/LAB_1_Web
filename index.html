@@ -1,4 +1,3 @@
-```html
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -18,7 +17,9 @@
 <body>
 
   <!-- Skip Link -->
-  <a class="skip-link" href="#main">Skip to Content</a>
+  <a class="skip-link" href="#main">
+    Skip to Content
+  </a>
 
   <!-- Site Header -->
   <header>
@@ -49,7 +50,7 @@
   </header>
 
   <!-- Primary Content -->
-  <main id="main">
+  <main id="main" tabindex="-1">
 
     <!-- Profile -->
     <section id="profile" aria-labelledby="profile-heading">
@@ -105,7 +106,9 @@
       aria-live="polite"
       data-state="loading"
     >
-      <h2 id="projects-heading">Projects</h2>
+      <h2 id="projects-heading" tabindex="-1">
+        Projects
+      </h2>
 
       <ul
         id="portfolio-content"
@@ -202,4 +205,3 @@
 
 </body>
 </html>
-```
