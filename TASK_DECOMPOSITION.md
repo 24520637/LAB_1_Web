@@ -1937,5 +1937,68 @@ The task includes:
 git add .
 git commit -m "fix(a11y): contrast & landmarks"
 ```
+# WBS Task M2 — Focus Trap Audit & Keyboard Navigation
+
+### Task ID
+
+M2
+
+### Task Name
+
+Focus Trap Audit & Keyboard Navigation
+
+### Objective
+
+Audit keyboard accessibility to ensure:
+
+* No **Focus Trap** or stuck keyboard focus.
+* Complete **Tab / Shift+Tab / Enter / Space** navigation.
+* Focus indicator is always clearly visible.
+
+### Scope
+
+Test the complete page flow, including:
+
+* Navigation and Skip-link.
+* Theme toggle.
+* Card Retry button.
+* Focus movement and visible focus indicator.
+
+### Acceptance Criteria
+
+* [ ] No element creates a Focus Trap.
+* [ ] `Tab` moves through all interactive elements in logical order.
+* [ ] `Shift+Tab` moves backward correctly.
+* [ ] `Enter` activates applicable links/buttons.
+* [ ] `Space` activates applicable buttons/toggles.
+* [ ] Skip-link works correctly.
+* [ ] Theme toggle is keyboard accessible.
+* [ ] Card Retry button is keyboard accessible.
+* [ ] Focus outline is always visible and is not removed.
+* [ ] Focus returns to a logical location after dynamic actions.
+* [ ] Full keyboard flow passes from start to end of the page.
+
+### Mandatory Pre-Commit Test Checklist
+
+| Shortcut            | Test                     | Expected Result                                    |
+| ------------------- | ------------------------ | -------------------------------------------------- |
+| `Tab`               | Navigate forward         | Every interactive element receives focus           |
+| `Shift + Tab`       | Navigate backward        | Focus moves backward logically                     |
+| `Enter`             | Activate links/buttons   | Correct action is triggered                        |
+| `Space`             | Activate buttons/toggles | Correct action is triggered                        |
+| `Tab`               | Test Skip-link           | Skip-link receives focus and jumps to main content |
+| `Tab + Enter/Space` | Theme toggle             | Theme changes correctly                            |
+| `Tab + Enter/Space` | Card Retry               | Retry action works correctly                       |
+| Any key             | Check focus              | No Focus Trap / stuck focus                        |
+| All steps           | Check outline            | Focus indicator remains clearly visible            |
+
+**Pre-commit rule:** Complete the keyboard audit → fix failures → re-test the entire flow → commit only after all checks pass.
+
+### Exact Git Commit
+
+```bash
+git add .
+git commit -m "fix(nav): keyboard trap prevention"
+```
 
 
