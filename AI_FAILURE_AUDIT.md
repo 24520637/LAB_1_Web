@@ -50,3 +50,38 @@ The following were confirmed:
 
 * **Original AI-generated checklist:** `[Git commit/hash:git commit -m "docs(nav): update WBS task M2 keyboard navigation"]`
 * **Refactored checklist:** `[Git commit/hash: git commit -m "docs(nav): fixing the mandatory Pre-Commit Keyboard Accessibility Test Checklist"]`
+
+## Defect 2 — Incomplete Mobile 375px Constraint and Font Loading Strategy
+
+### 1. Defect Description
+
+Task M4 did not explicitly cover:
+
+* The **375px overflow constraint** (`scrollWidth <= clientWidth`).
+* Font optimization using `font-display: swap` and `preload`, required to support **CLS = 0** and **LCP < 2s**.
+
+### 2. Diagnostic Method
+
+A manual review was performed against the requirements and testing structure defined in **T-02/T-03**. It identified that:
+* Default Lighthouse testing may not detect all 375px horizontal overflow issues.
+* Font loading behavior and related layout shifts require explicit verification.
+
+### 3. Refactored Solution
+
+M4 was updated to include:
+
+* An explicit **375px viewport overflow test** verifying `scrollWidth <= clientWidth`.
+* A font loading strategy using **`font-display: swap` + `preload`**.
+* Corresponding acceptance criteria and mandatory pre-commit checklist items.
+
+### Verification
+
+* Tested the application at a **375px viewport** and verified no horizontal overflow.
+* Tested performance under **Fast 3G** conditions.
+* Verified font loading behavior against the **CLS = 0** and **LCP < 2s** targets.
+
+### Related Evidence
+
+* **Original M4:** `[Git commit/hash: git commit -m "docs(perf): update WBS task M4 performance requirements"]`
+* **Refactored M4:** `[Git commit/hash:git commit -m "docs(perf): update WBS task M4 performance requirements ]`
+
