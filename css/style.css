@@ -1,7 +1,3 @@
-/* =========================================================
-   Enterprise Developer Portfolio
-   M2 — Keyboard Focus Trap Prevention
-   ========================================================= */
 
 /* =========================================================
    DESIGN TOKENS — LIGHT THEME
@@ -217,18 +213,6 @@ a:hover {
    KEYBOARD FOCUS INDICATOR
    ========================================================= */
 
-/*
- * Do NOT use:
- *
- * :focus {
- *   outline: none;
- * }
- *
- * Removing the outline globally can hide keyboard focus.
- *
- * :focus-visible provides a clear indicator for keyboard users.
- */
-
 :focus-visible {
   outline:
     var(--focus-width)
@@ -237,11 +221,6 @@ a:hover {
 
   outline-offset: var(--focus-offset);
 }
-
-
-/*
- * Explicit focus styling for the main keyboard controls.
- */
 
 a:focus-visible,
 button:focus-visible {
@@ -252,15 +231,6 @@ button:focus-visible {
 
   outline-offset: var(--focus-offset);
 }
-
-
-/*
- * Main and section headings may receive programmatic focus
- * after Skip-link or dynamic content updates.
- *
- * They are not part of the normal Tab sequence because
- * tabindex="-1" is used in HTML.
- */
 
 main:focus-visible,
 #projects-heading:focus-visible {

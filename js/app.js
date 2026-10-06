@@ -1,8 +1,3 @@
-/* =========================================================
-   Enterprise Developer Portfolio
-   M2 — Keyboard Focus Trap Prevention
-   ========================================================= */
-
 
 /* =========================================================
    THEME TOGGLE
@@ -11,35 +6,61 @@
 const themeToggle = document.querySelector("#theme-toggle");
 const root = document.documentElement;
 
-const savedTheme = localStorage.getItem("theme");
+function getSavedTheme() {
+  try {
+    return localStorage.getItem("theme");
+  } catch (error) {
+    return null;
+  }
+}
+
+function saveTheme(theme) {
+  try {
+    localStorage.setItem("theme", theme);
+  } catch (error) {
+    /*
+     * The application can continue working even if
+     * localStorage is unavailable.
+     */
+  }
+}
+
+const savedTheme = getSavedTheme();
 const initialTheme = savedTheme === "dark" ? "dark" : "light";
 
 function setTheme(theme) {
   root.dataset.theme = theme;
 
-  localStorage.setItem("theme", theme);
+  saveTheme(theme);
 
-  if (themeToggle) {
-    themeToggle.setAttribute(
-      "aria-pressed",
-      String(theme === "dark")
-    );
-
-    themeToggle.textContent =
-      theme === "dark"
-        ? "Switch to light mode"
-        : "Switch to dark mode";
+  if (!themeToggle) {
+    return;
   }
+
+  themeToggle.setAttribute(
+    "aria-pressed",
+    String(theme === "dark")
+  );
+
+  themeToggle.textContent =
+    theme === "dark"
+      ? "Switch to light mode"
+      : "Switch to dark mode";
 }
 
 setTheme(initialTheme);
 
 if (themeToggle) {
   /*
-   * Native <button> keyboard behavior is preserved.
+   * Native button behavior:
+   * Enter and Space both dispatch click events.
    *
-   * Enter and Space both trigger the click event automatically.
-   * No custom keydown handler is required.
+   * Therefore the single click listener supports:
+   * - Mouse activation
+   * - Enter activation
+   * - Space activation
+   *
+   * No inline event handler is used.
    */
   themeToggle.addEventListener("click", () => {
     const nextTheme =
@@ -61,25 +82,29 @@ const mainContent = document.querySelector("#main");
 
 if (skipLink && mainContent) {
   skipLink.addEventListener("click", (event) => {
-    const targetSelector = skipLink.getAttribute("href");
+    const targetSelector =
+      skipLink.getAttribute("href");
 
     if (!targetSelector) {
       return;
     }
 
-    const target = document.querySelector(targetSelector);
+    const target =
+      document.querySelector(targetSelector);
 
     if (!target) {
       return;
     }
 
     /*
-     * Prevent the browser from only changing the scroll position.
-     * We explicitly move keyboard focus to <main>.
+     * Prevent the default anchor behavior so that
+     * keyboard focus can be explicitly moved to <main>.
      */
     event.preventDefault();
 
-    target.focus({ preventScroll: true });
+    target.focus({
+      preventScroll: true,
+    });
 
     target.scrollIntoView({
       behavior: "smooth",
@@ -87,7 +112,8 @@ if (skipLink && mainContent) {
     });
 
     /*
-     * Keep the URL fragment synchronized with the skip target.
+     * Keep the URL fragment synchronized with
+     * the skip-link destination.
      */
     window.history.pushState(
       null,
@@ -325,10 +351,12 @@ function restoreProjectFocus() {
   /*
    * The Retry button is removed when the DOM changes.
    *
-   * Restore focus to the Projects heading so keyboard users
-   * do not lose their position after the dynamic update.
+   * Restore keyboard focus to the Projects heading
+   * so the user does not lose their position.
    */
-  projectsHeading.focus({ preventScroll: true });
+  projectsHeading.focus({
+    preventScroll: true,
+  });
 
   projectsHeading.scrollIntoView({
     behavior: "smooth",
@@ -343,6 +371,7 @@ function restoreProjectFocus() {
 
 window.portfolioStateController = {
   setState: setPortfolioState,
+
   states: [
     "loading",
     "live",
@@ -368,36 +397,47 @@ if (portfolioContent && projectSection) {
      RETRY BUTTON — EVENT DELEGATION
      ======================================================= */
 
-  portfolioContent.addEventListener("click", (event) => {
-    const retryButton =
-      event.target.closest(".retry-button");
-
-    if (!retryButton) {
-      return;
-    }
-
-    /*
-     * Native <button> behavior means both:
-     *
-     * Enter
-     * Space
-     *
-     * generate the click event.
-     *
-     * Therefore one click handler supports both keyboard
-     * activation methods without custom keyboard listeners.
-     */
-
-    setPortfolioState("loading");
-
-    window.setTimeout(() => {
-      setPortfolioState("live");
+  portfolioContent.addEventListener(
+    "click",
+    (event) => {
+      const eventTarget = event.target;
 
       /*
-       * The original Retry button no longer exists.
-       * Restore focus to the Projects heading.
+       * Guard against non-Element event targets.
        */
-      restoreProjectFocus();
-    }, 800);
-  });
+      if (!(eventTarget instanceof Element)) {
+        return;
+      }
+
+      const retryButton =
+        eventTarget.closest(".retry-button");
+
+      if (!retryButton) {
+        return;
+      }
+
+      /*
+       * Native <button> behavior means:
+       *
+       * Enter -> click
+       * Space -> click
+       *
+       * Therefore this one listener supports both
+       * keyboard activation methods.
+       */
+      setPortfolioState("loading");
+
+      window.setTimeout(() => {
+        setPortfolioState("live");
+
+        /*
+         * The Retry button no longer exists after
+         * the state changes.
+         *
+         * Restore focus to the Projects heading.
+         */
+        restoreProjectFocus();
+      }, 800);
+    }
+  );
 }

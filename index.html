@@ -9,6 +9,32 @@
     content="Enterprise Developer Portfolio of Huong Bui Nguyen Quynh showcasing professional profile, skills, projects, and experience."
   >
 
+  <!-- =======================================================
+       M3 — STRICT CONTENT SECURITY POLICY
+       ======================================================= -->
+  <meta
+    http-equiv="Content-Security-Policy"
+    content="
+      default-src 'self';
+      base-uri 'self';
+      object-src 'none';
+      script-src 'self';
+      script-src-elem 'self';
+      script-src-attr 'none';
+      style-src 'self';
+      style-src-elem 'self';
+      style-src-attr 'none';
+      img-src 'self' data:;
+      font-src 'self';
+      connect-src 'self';
+      frame-src 'none';
+      worker-src 'self';
+      manifest-src 'self';
+      form-action 'self';
+      upgrade-insecure-requests;
+    "
+  >
+
   <link rel="stylesheet" href="css/style.css">
 
   <title>Huong Bui Nguyen Quynh - Portfolio</title>
@@ -201,6 +227,7 @@
     </p>
   </footer>
 
+  <!-- External JavaScript only -->
   <script src="js/app.js" defer></script>
 
 </body>
