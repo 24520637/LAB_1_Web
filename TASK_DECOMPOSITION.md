@@ -2072,4 +2072,64 @@ Enforce a strict security policy by:
 git add .
 git commit -m "sec: strict csp & zero inline handlers"
 ```
+# WBS Task M4 — Performance Optimization & Lighthouse 100 Audit
+
+### Task ID
+
+M4
+
+### Task Name
+
+Performance Optimization & Lighthouse 100 Audit
+
+### Objective
+
+Achieve a **100 Lighthouse score** in all four categories:
+
+* Performance
+* Accessibility
+* Best Practices
+* SEO
+
+### Scope
+
+* Optimize assets and resource loading.
+* Optimize CSS rendering.
+* Optimize font loading.
+* Reduce unnecessary **reflow/repaint**.
+* Validate performance under **Fast 3G** conditions.
+
+### Acceptance Criteria
+
+* [ ] Lighthouse score = **100/100** for Performance.
+* [ ] Lighthouse score = **100/100** for Accessibility.
+* [ ] Lighthouse score = **100/100** for Best Practices.
+* [ ] Lighthouse score = **100/100** for SEO.
+* [ ] **CLS = 0**.
+* [ ] **LCP < 2.0s** on Fast 3G.
+* [ ] Assets, CSS, fonts, and rendering are optimized.
+* [ ] No unnecessary reflow/repaint issues remain.
+
+### Mandatory Pre-Commit Test Checklist
+
+| Test           | Chrome DevTools Action               | Expected Result                             |
+| -------------- | ------------------------------------ | ------------------------------------------- |
+| Lighthouse     | Run Lighthouse audit                 | All 4 categories = **100**                  |
+| Fast 3G        | Lighthouse → Network → Fast 3G       | Performance targets remain satisfied        |
+| LCP            | Check Lighthouse/Performance metrics | **LCP < 2.0s**                              |
+| CLS            | Check Lighthouse/Performance metrics | **CLS = 0**                                 |
+| Assets         | Performance → Network                | No unnecessary/oversized assets             |
+| CSS            | Performance/Rendering inspection     | Efficient CSS rendering                     |
+| Fonts          | Network → Font resources             | Fonts load efficiently without layout shift |
+| Reflow/Repaint | Performance recording                | No unnecessary layout/repaint activity      |
+| Console        | DevTools → Console                   | No errors or performance-related warnings   |
+
+**Pre-commit rule:** Optimize → Run Lighthouse → Analyze Performance → Fix issues → Re-test all metrics → Commit only when all acceptance criteria pass.
+
+### Exact Git Commit
+
+```bash
+git add .
+git commit -m "perf: optimize assets"
+```
 
