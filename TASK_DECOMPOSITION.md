@@ -948,3 +948,994 @@ Entire UI updates
 within the **3-minute defense**, with any required correction completed within **60 seconds**.
 
 This makes the CSS architecture not only visually functional, but also **inspectable, maintainable, and defensible under live evaluation**.
+
+
+# WBS Task T-03 — Build a 4-State Resilient Portfolio Component
+
+### Task ID
+
+T-03
+
+### Task Name
+
+Build a resilient portfolio component supporting Loading, Live, Empty, and Error states
+
+### Objective
+
+Extend the Enterprise Developer Portfolio with a resilient component architecture that clearly represents all four required UI states:
+
+1. **Loading** — data is being prepared.
+2. **Live** — valid data is available and rendered.
+3. **Empty** — request succeeds but no data is available.
+4. **Error** — data retrieval or processing fails.
+
+The implementation must provide an accessible and visually understandable experience for every state while preserving the semantic HTML structure established in T-01 and the responsive layout established in T-02.
+
+Each sub-task MUST be **implemented → tested → validated → committed individually**.
+
+---
+
+## Scope
+
+T-03 includes:
+
+* Defining the component state machine.
+* Building a pure-CSS loading skeleton.
+* Building the live data presentation.
+* Building accessible empty and error states.
+* Providing an accessible retry trigger.
+* Maintaining the 375px responsive requirement.
+* Maintaining keyboard accessibility.
+* Ensuring state transitions do not introduce layout instability.
+* Testing each state **before its Git commit**.
+* Keeping each sub-task independently traceable in Git.
+
+---
+
+# 4-State Component State Machine
+
+The state machine MUST be documented in `TASK_DECOMPOSITION.md`.
+
+```text
+                    ┌──────────────┐
+                    │   LOADING    │
+                    └──────┬───────┘
+                           │
+                data succeeds
+                           │
+                           ▼
+                    ┌──────────────┐
+                    │     LIVE     │
+                    └──────┬───────┘
+                           │
+                     no data
+                           │
+                           ▼
+                    ┌──────────────┐
+                    │    EMPTY     │
+                    └──────────────┘
+
+
+LOADING ───── data fails ─────► ERROR
+                                  │
+                                  │ Retry
+                                  ▼
+                               LOADING
+```
+
+### State Contract
+
+| State     | Meaning                                | Required UI                  |
+| --------- | -------------------------------------- | ---------------------------- |
+| `loading` | Data is being loaded                   | CSS skeleton/shimmer         |
+| `live`    | Data exists                            | Real content + metadata      |
+| `empty`   | Request succeeded but no records exist | Empty-state message          |
+| `error`   | Request failed                         | Error message + retry button |
+
+### Valid State Transitions
+
+```text
+loading → live
+loading → empty
+loading → error
+error → loading
+```
+
+The implementation MUST NOT create undefined visual states.
+
+---
+
+# Strict T-03 Acceptance Criteria Matrix
+
+| ID        | Acceptance Requirement | Mandatory Condition                                           | Validation                 |
+| --------- | ---------------------- | ------------------------------------------------------------- | -------------------------- |
+| T03-AC-01 | Four-State Contract    | Loading, Live, Empty, Error all exist                         | Manual state testing       |
+| T03-AC-02 | State Separation       | Each state has a clearly identifiable UI representation       | DevTools/manual inspection |
+| T03-AC-03 | Loading Skeleton       | Skeleton uses pure CSS shimmer                                | CSS inspection             |
+| T03-AC-04 | Live Data              | Data is displayed using responsive Grid/Flexbox               | Elements inspection        |
+| T03-AC-05 | Empty State            | Empty state explains that no data is available                | Manual inspection          |
+| T03-AC-06 | Error State            | Error state communicates failure clearly                      | Manual inspection          |
+| T03-AC-07 | Retry                  | Error state contains an accessible retry trigger              | Keyboard + mouse test      |
+| T03-AC-08 | Keyboard               | Interactive controls support Tab + Enter/Space                | Keyboard-only test         |
+| T03-AC-09 | 375px                  | All four states render without horizontal scrolling           | DevTools 375px             |
+| T03-AC-10 | Accessibility          | State changes remain understandable to assistive technologies | Accessibility inspection   |
+| T03-AC-11 | Contrast               | State text meets WCAG 2.2 AA, normal text >= 4.5:1            | Contrast checker           |
+| T03-AC-12 | Layout Stability       | State transitions do not create unnecessary layout shift      | Performance inspection     |
+| T03-AC-13 | T-01 Compatibility     | Zero `<div>` elements remain                                  | DOM inspection             |
+| T03-AC-14 | T-02 Compatibility     | Existing responsive layout and theme tokens remain functional | Light/dark testing         |
+| T03-AC-15 | Individual Testing     | Each sub-task is tested before commit                         | Test checklist + Git       |
+| T03-AC-16 | Git Traceability       | Each sub-task has its own commit                              | `git log --oneline`        |
+
+---
+
+# WBS Task T-03A — Build Loading Skeleton
+
+### Task ID
+
+T-03A
+
+### Task Name
+
+Build the pure-CSS loading skeleton with shimmer effect
+
+### Objective
+
+Create a loading representation that communicates that portfolio data is being prepared without relying on JavaScript animation libraries or external dependencies.
+
+The skeleton MUST use CSS only for the visual shimmer effect.
+
+---
+
+## Detailed Actionable Deliverables
+
+### 1. Define the loading state structure
+
+Create a semantic loading container appropriate to the existing portfolio structure.
+
+Example conceptual structure:
+
+```text
+Loading State
+├── Skeleton heading
+├── Skeleton metadata
+├── Skeleton content
+└── Skeleton content
+```
+
+Do not introduce `<div>` elements.
+
+---
+
+### 2. Create skeleton elements
+
+Provide skeleton placeholders for important live-data elements such as:
+
+* Title
+* Metadata
+* Description
+* Project/list content
+
+Each placeholder should have a predictable class, for example:
+
+```text
+skeleton
+skeleton-title
+skeleton-meta
+skeleton-text
+```
+
+---
+
+### 3. Implement pure CSS shimmer
+
+The shimmer MUST be created using CSS.
+
+Acceptable tools include:
+
+```css
+background
+linear-gradient()
+background-size
+@keyframes
+transform
+```
+
+Do NOT use:
+
+* JavaScript animation loops.
+* Animation libraries.
+* External packages.
+* Images/GIFs for the shimmer.
+
+---
+
+### 4. Use existing design tokens
+
+The skeleton MUST consume T-02 tokens where appropriate.
+
+For example:
+
+```text
+--color-surface
+--color-surface-raised
+--color-border
+--space-*
+--radius-*
+```
+
+Do not introduce unnecessary hardcoded colors.
+
+---
+
+### 5. Respect reduced-motion preferences
+
+The shimmer should not create an accessibility problem for users who request reduced motion.
+
+Support:
+
+```css
+@media (prefers-reduced-motion: reduce)
+```
+
+The skeleton should remain visually understandable without continuous animation.
+
+---
+
+## Technical Acceptance Criteria / Validation Checklist
+
+### Loading UI
+
+* [ ] Loading state exists.
+* [ ] Skeleton clearly communicates loading.
+* [ ] Skeleton uses CSS only.
+* [ ] Shimmer uses CSS gradient/animation.
+* [ ] No JavaScript animation library is required.
+* [ ] Skeleton dimensions resemble the final content.
+* [ ] Skeleton does not cause unexpected page expansion.
+
+### Accessibility
+
+* [ ] Loading state is understandable to assistive technologies.
+* [ ] No unnecessary focusable elements exist.
+* [ ] Reduced-motion preference is respected.
+* [ ] Contrast remains acceptable.
+* [ ] Existing skip-link remains functional.
+
+### Responsive
+
+At exactly `375px`:
+
+* [ ] No horizontal scrolling.
+* [ ] Skeleton fits the viewport.
+* [ ] Skeleton text blocks do not overflow.
+* [ ] No layout clipping.
+
+### T-01/T-02 Compatibility
+
+* [ ] Zero `<div>` elements.
+* [ ] Existing semantic landmarks remain unchanged.
+* [ ] Existing CSS Grid remains functional.
+* [ ] Existing theme variables are reused.
+* [ ] Light theme works.
+* [ ] Dark theme works.
+
+---
+
+## T-03A Mandatory Pre-Commit Test
+
+**Do not commit immediately after writing the skeleton.**
+
+Test:
+
+```text
+1. Open portfolio
+2. Force Loading state
+3. Verify skeleton appears
+4. Check shimmer
+5. Resize to 375px
+6. Check horizontal overflow
+7. Test light theme
+8. Test dark theme
+9. Test keyboard navigation
+10. Check Console
+```
+
+Console requirement:
+
+```text
+0 JavaScript errors
+```
+
+375px requirement:
+
+```js
+document.documentElement.scrollWidth <=
+document.documentElement.clientWidth
+```
+
+Expected:
+
+```text
+true
+```
+
+Only after all tests pass should T-03A be committed.
+
+### Exact Git Commit
+
+```bash
+git add styles.css index.html
+git commit -m "feat(css): skeleton"
+```
+
+---
+
+# WBS Task T-03B — Build Live Data State
+
+### Task ID
+
+T-03B
+
+### Task Name
+
+Build the responsive live-data component using Grid and Flexbox
+
+### Objective
+
+Create the primary data-presenting state in which valid portfolio/project data is displayed using the responsive layout system established in T-02.
+
+The live state must remain readable and usable at desktop and 375px mobile widths.
+
+---
+
+## Detailed Actionable Deliverables
+
+### 1. Define the live-data structure
+
+The live state should contain meaningful information such as:
+
+```text
+Project
+├── Project title
+├── Description
+├── Technology metadata
+├── Status
+└── Additional information
+```
+
+Use semantic HTML elements.
+
+---
+
+### 2. Build the data list using CSS Grid
+
+The collection of live items should use Grid.
+
+Conceptually:
+
+```text
+Desktop:
+
+┌─────────────┬─────────────┐
+│ Project 1   │ Project 2   │
+├─────────────┼─────────────┤
+│ Project 3   │ Project 4   │
+└─────────────┴─────────────┘
+```
+
+At mobile:
+
+```text
+┌─────────────────┐
+│    Project 1    │
+├─────────────────┤
+│    Project 2    │
+├─────────────────┤
+│    Project 3    │
+└─────────────────┘
+```
+
+---
+
+### 3. Build metadata badges using Flexbox
+
+Metadata should use Flexbox for flexible one-dimensional arrangement.
+
+Examples:
+
+```text
+JavaScript
+React
+Node.js
+MySQL
+Completed
+```
+
+The badges must wrap naturally when the viewport becomes narrow.
+
+---
+
+### 4. Prevent overflow
+
+Use:
+
+```css
+min-width: 0;
+```
+
+and existing layout tokens where appropriate.
+
+Long:
+
+* Project names
+* URLs
+* Technology names
+* Descriptions
+
+must not create horizontal scrolling.
+
+---
+
+### 5. Preserve semantic document order
+
+Do not use CSS `order` to create an accessibility-unfriendly reading sequence.
+
+The DOM order must remain logical.
+
+---
+
+## Technical Acceptance Criteria / Validation Checklist
+
+### Live State
+
+* [ ] Live state renders valid content.
+* [ ] Data items use semantic HTML.
+* [ ] List/grid uses CSS Grid.
+* [ ] Metadata uses Flexbox.
+* [ ] Metadata wraps correctly.
+* [ ] Content does not overflow.
+* [ ] Grid remains responsive.
+
+### 375px
+
+* [ ] Zero horizontal scrolling.
+* [ ] One practical column.
+* [ ] No clipped project cards.
+* [ ] Metadata wraps.
+* [ ] Long text wraps.
+* [ ] Images/media remain inside their containers.
+
+### Accessibility
+
+* [ ] Heading hierarchy remains valid.
+* [ ] Links are keyboard accessible.
+* [ ] Buttons are native buttons.
+* [ ] Tab order follows DOM order.
+* [ ] Enter activates links.
+* [ ] Space/Enter activates buttons.
+* [ ] Focus remains visible.
+* [ ] Contrast >= 4.5:1 for normal text.
+
+### Theme Compatibility
+
+* [ ] Live state works in light mode.
+* [ ] Live state works in dark mode.
+* [ ] Metadata remains readable in both themes.
+* [ ] No hardcoded component colors bypass CSS tokens.
+
+---
+
+## T-03B Mandatory Pre-Commit Test
+
+Before committing:
+
+```text
+1. Force Live state
+2. Verify all data is visible
+3. Verify Grid layout
+4. Verify metadata Flexbox
+5. Resize to 375px
+6. Check horizontal overflow
+7. Test Tab navigation
+8. Test Enter on links
+9. Test light theme
+10. Test dark theme
+11. Check Console
+```
+
+Expected:
+
+```text
+Console errors = 0
+Horizontal overflow = 0
+```
+
+Run:
+
+```js
+document.documentElement.scrollWidth <=
+document.documentElement.clientWidth
+```
+
+Expected:
+
+```text
+true
+```
+
+Only then commit.
+
+### Exact Git Commit
+
+```bash
+git add styles.css index.html
+git commit -m "feat(css): live data"
+```
+
+---
+
+# WBS Task T-03C — Build Empty & Error States
+
+### Task ID
+
+T-03C
+
+### Task Name
+
+Build accessible Empty and Error states with retry trigger
+
+### Objective
+
+Provide clear fallback interfaces when the component has no data or when data retrieval fails.
+
+The Error state must provide an accessible retry mechanism that returns the component to the Loading state.
+
+---
+
+## Detailed Actionable Deliverables
+
+### 1. Build Empty state
+
+The Empty state should communicate:
+
+```text
+No projects available.
+```
+
+or an equivalent meaningful message.
+
+It should explain what the user is seeing without implying that an error occurred.
+
+Example structure:
+
+```text
+Empty
+├── Heading
+├── Explanation
+└── Optional action
+```
+
+---
+
+### 2. Build Error state
+
+The Error state should clearly communicate:
+
+```text
+Something went wrong.
+We couldn't load the projects.
+```
+
+The error message should be user-friendly.
+
+Do not expose raw:
+
+```text
+stack traces
+API errors
+database errors
+```
+
+to normal users.
+
+---
+
+### 3. Create accessible retry trigger
+
+Use a native button:
+
+```html
+<button type="button">
+  Try again
+</button>
+```
+
+The retry trigger MUST:
+
+* Be keyboard accessible.
+* Have a clear accessible name.
+* Be visually identifiable.
+* Have a visible focus state.
+* Return the component to Loading.
+
+---
+
+### 4. Define Error → Loading transition
+
+The state flow must be:
+
+```text
+ERROR
+  ↓
+User activates Retry
+  ↓
+LOADING
+  ↓
+LIVE / EMPTY / ERROR
+```
+
+The retry operation must not directly jump from Error to Live without passing through Loading.
+
+---
+
+### 5. Provide accessible state communication
+
+The state container should communicate dynamic changes appropriately.
+
+Where appropriate, use an accessible status mechanism such as:
+
+```html
+aria-live="polite"
+```
+
+Avoid making the entire page repeatedly announce unnecessary content.
+
+---
+
+### 6. Prevent retry failures from breaking the UI
+
+Repeated retry operations must be safe:
+
+```text
+Error
+→ Retry
+→ Loading
+→ Error
+→ Retry
+→ Loading
+```
+
+No uncaught JavaScript errors should occur.
+
+---
+
+## Technical Acceptance Criteria / Validation Checklist
+
+### Empty State
+
+* [ ] Empty state exists.
+* [ ] Empty state is visually distinguishable.
+* [ ] Message clearly explains that no data exists.
+* [ ] Empty state is not incorrectly presented as an error.
+* [ ] Empty state works at 375px.
+* [ ] Empty state works in light/dark themes.
+
+### Error State
+
+* [ ] Error state exists.
+* [ ] Error message is understandable.
+* [ ] Technical error details are not exposed unnecessarily.
+* [ ] Retry button exists.
+* [ ] Retry button is a native `<button>`.
+* [ ] Retry button has an accessible name.
+* [ ] Retry button is keyboard accessible.
+* [ ] Retry button has visible focus.
+* [ ] Retry returns to Loading.
+
+### State Transition
+
+Required:
+
+```text
+loading → live
+loading → empty
+loading → error
+error → loading
+```
+
+* [ ] All transitions behave correctly.
+* [ ] Repeated retry does not create errors.
+* [ ] No invalid state appears.
+
+### Accessibility
+
+* [ ] Tab reaches retry.
+* [ ] Enter activates retry.
+* [ ] Space activates retry.
+* [ ] No keyboard trap.
+* [ ] Focus remains visible.
+* [ ] Dynamic state changes are communicated appropriately.
+* [ ] Normal text contrast >= 4.5:1.
+
+### 375px
+
+* [ ] Empty state has no horizontal overflow.
+* [ ] Error state has no horizontal overflow.
+* [ ] Retry button remains visible.
+* [ ] Retry button remains usable.
+* [ ] Long error messages wrap correctly.
+
+### Theme
+
+* [ ] Empty state works in light mode.
+* [ ] Empty state works in dark mode.
+* [ ] Error state works in light mode.
+* [ ] Error state works in dark mode.
+* [ ] Retry button remains readable in both themes.
+
+---
+
+## T-03C Mandatory Pre-Commit Test
+
+Before committing, test **both states and the transition**.
+
+### Empty test
+
+```text
+1. Force Empty state
+2. Verify message
+3. Test 375px
+4. Test light mode
+5. Test dark mode
+6. Test keyboard navigation
+7. Check Console
+```
+
+### Error test
+
+```text
+1. Force Error state
+2. Verify error message
+3. Find Retry button
+4. Press Tab
+5. Press Enter
+6. Verify Loading appears
+7. Verify next state
+8. Repeat retry
+9. Check Console
+```
+
+Expected:
+
+```text
+Console errors = 0
+Horizontal overflow = 0
+Keyboard trap = 0
+```
+
+Then test:
+
+```text
+ERROR
+  ↓ Enter
+LOADING
+  ↓
+LIVE / EMPTY / ERROR
+```
+
+Only after all tests pass should the commit be created.
+
+### Exact Git Commit
+
+```bash
+git add app.js styles.css index.html
+git commit -m "feat(ui): empty and error states"
+```
+
+If your project follows the original filename from the WBS, use `script.js` instead of `app.js`.
+
+---
+
+# T-03 Final Definition of Done
+
+T-03 is DONE only when **T-03A, T-03B, and T-03C** have independently passed their tests and have their own commits.
+
+### Required Final Checklist
+
+#### State Coverage
+
+* [ ] Loading state exists.
+* [ ] Live state exists.
+* [ ] Empty state exists.
+* [ ] Error state exists.
+* [ ] State machine is documented in `TASK_DECOMPOSITION.md`.
+
+#### Loading
+
+* [ ] Pure CSS skeleton.
+* [ ] CSS shimmer gradient.
+* [ ] No animation dependency.
+* [ ] Reduced-motion support.
+
+#### Live
+
+* [ ] Responsive Grid list.
+* [ ] Flexbox metadata badges.
+* [ ] Semantic content structure.
+* [ ] Responsive at 375px.
+
+#### Empty
+
+* [ ] Clear no-data message.
+* [ ] Accessible presentation.
+* [ ] Works in both themes.
+
+#### Error
+
+* [ ] Clear error message.
+* [ ] Accessible retry trigger.
+* [ ] Retry → Loading.
+* [ ] Repeated retry does not produce errors.
+
+#### Accessibility
+
+* [ ] WCAG 2.2 AA contrast >= 4.5:1.
+* [ ] Full Tab navigation.
+* [ ] Enter activates links/buttons appropriately.
+* [ ] Space activates native buttons.
+* [ ] Focus indicators remain visible.
+* [ ] Dynamic state changes are appropriately communicated.
+* [ ] Zero `<div>` elements.
+* [ ] T-01 landmarks remain intact.
+
+#### Responsive
+
+* [ ] 375px tested.
+* [ ] Zero horizontal scroll.
+* [ ] No content clipping.
+* [ ] No overflow from long text.
+* [ ] All four states tested at 375px.
+
+#### Theme
+
+* [ ] Loading works in light/dark.
+* [ ] Live works in light/dark.
+* [ ] Empty works in light/dark.
+* [ ] Error works in light/dark.
+* [ ] `localStorage['theme']` persistence remains functional.
+* [ ] Zero console errors during state/theme interaction.
+
+#### Performance
+
+* [ ] CLS = `0` target.
+* [ ] LCP < `2.0s` on Fast 3G.
+* [ ] State transitions do not cause unnecessary layout shifts.
+* [ ] No unnecessary external dependencies.
+
+---
+
+# Decomposition Submission Pipeline
+
+The implementation order MUST be:
+
+```text
+TASK_DECOMPOSITION.md
+        ↓
+Define 4-state state machine
+        ↓
+T-03A
+Loading Skeleton
+        ↓
+TEST T-03A
+        ↓
+COMMIT T-03A
+        ↓
+T-03B
+Live Data
+        ↓
+TEST T-03B
+        ↓
+COMMIT T-03B
+        ↓
+T-03C
+Empty + Error + Retry
+        ↓
+TEST T-03C
+        ↓
+COMMIT T-03C
+        ↓
+Final 4-state validation
+```
+
+### Git History
+
+The final history should make the decomposition independently visible:
+
+```bash
+git log --oneline --decorate
+```
+
+Expected pattern:
+
+```text
+<hash> feat(ui): empty and error states
+<hash> feat(css): live data
+<hash> feat(css): skeleton
+<hash> feat(js): dark mode engine
+<hash> feat(css): responsive grid
+<hash> feat(css): tokens & reset
+```
+
+### Core Rule
+
+> **Never commit first and test later.**
+
+For T-03, the required workflow is:
+
+**Build → Test the specific state → Validate accessibility/responsiveness → Commit → Move to the next state.**
+
+----
+# WBS Task M1 — WCAG 2.2 AA Audit
+
+### Task ID
+
+M1
+
+### Task Name
+
+WCAG 2.2 AA Audit — Color Contrast & Landmark Tree
+
+### Objective
+
+Audit the Production Portfolio for WCAG 2.2 AA compliance, focusing on:
+
+* Color contrast: normal text **>= 4.5:1**.
+* Correct semantic Landmark Tree structure.
+* Accessibility in both **Light** and **Dark** themes.
+
+### Scope
+
+The task includes:
+
+* Auditing text/background contrast.
+* Inspecting the semantic Landmark Tree using Chrome DevTools.
+* Running automated accessibility tests in both Light and Dark themes.
+* Fixing all identified contrast and landmark issues.
+* Re-testing before committing.
+
+### Acceptance Criteria
+
+* [ ] All normal text has contrast **>= 4.5:1**.
+* [ ] Light Theme passes contrast testing.
+* [ ] Dark Theme passes contrast testing.
+* [ ] Landmark Tree is logically structured.
+* [ ] Exactly one `<main>` landmark exists.
+* [ ] `<nav>`, `<header>`, `<aside>`, and `<footer>` are used appropriately.
+* [ ] No unnecessary generic containers replace semantic landmarks.
+* [ ] Manual DevTools audit passes.
+* [ ] Automated accessibility tests pass in both themes.
+* [ ] All discovered issues are fixed and re-tested.
+
+### Mandatory Pre-Commit Test Checklist
+
+```text
+1. Test Light Theme contrast >= 4.5:1.
+2. Test Dark Theme contrast >= 4.5:1.
+3. Inspect Landmark Tree in Chrome DevTools.
+4. Verify exactly one <main> and correct semantic landmarks.
+5. Run automated accessibility test in Light Theme.
+6. Run automated accessibility test in Dark Theme.
+7. Fix any failures.
+8. Re-run all tests.
+9. Check DevTools Console for errors.
+10. Commit only after all tests pass.
+```
+
+### Exact Git Commit
+
+```bash
+git add .
+git commit -m "fix(a11y): contrast & landmarks"
+```
+
+
