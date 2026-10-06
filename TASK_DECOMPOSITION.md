@@ -2020,4 +2020,56 @@ git add .
 git commit -m "fix(nav): keyboard trap prevention"
 ```
 
+# WBS Task M3 — Strict Security Policy & Event Handling
+
+### Task ID
+
+M3
+
+### Task Name
+
+Strict Security Policy & Event Handling
+
+### Objective
+
+Enforce a strict security policy by:
+
+* Prohibiting **100% inline event handlers**.
+* Configuring a strict **Content Security Policy (CSP)**.
+* Using `addEventListener` for all JavaScript events.
+
+### Scope
+
+* Audit HTML for `onclick`, `onchange`, `onload`, and all other inline event handlers.
+* Configure CSP through the `<meta>` tag in `index.html`.
+* Refactor all JavaScript event handling into `script.js` using `addEventListener`.
+* Verify CSP behavior through the DevTools Console.
+
+### Acceptance Criteria
+
+* [ ] Zero inline event handlers (`onclick`, `onchange`, `onload`, etc.).
+* [ ] All JavaScript events use `addEventListener`.
+* [ ] Strict CSP is configured in `index.html` using a `<meta>` tag.
+* [ ] No CSP violations appear in the DevTools Console.
+* [ ] All interactive functionality continues to work after refactoring.
+
+### Mandatory Pre-Commit Test Checklist
+
+| Test            | Action                                 | Expected Result                    |
+| --------------- | -------------------------------------- | ---------------------------------- |
+| Inline handlers | Search HTML for `on*` event attributes | No inline event handlers found     |
+| Event binding   | Review `script.js`                     | Events use `addEventListener`      |
+| CSP             | Inspect `<meta>` in `index.html`       | Strict CSP is present              |
+| Console         | Open DevTools → Console                | No CSP violation errors            |
+| Functionality   | Test all interactive controls          | All events work correctly          |
+| Reload test     | `Ctrl + R` / `F5`                      | No new CSP violations after reload |
+
+**Pre-commit rule:** Audit → Refactor → Test functionality → Check DevTools Console → Fix all CSP violations → Re-test → Commit.
+
+### Exact Git Commit
+
+```bash
+git add .
+git commit -m "sec: strict csp & zero inline handlers"
+```
 
