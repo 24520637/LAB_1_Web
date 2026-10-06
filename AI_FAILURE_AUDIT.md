@@ -48,5 +48,5 @@ The following were confirmed:
 
 ### Related Evidence
 
-* **Original AI-generated checklist:** `[Git commit/hash: __________________]`
-* **Refactored checklist:** `[Git commit/hash: __________________]`
+* **Original AI-generated checklist:** `[Git commit/hash:git commit -m "docs(nav): update WBS task M2 keyboard navigation"]`
+* **Refactored checklist:** `[Git commit/hash: git commit -m "docs(nav): fixing the mandatory Pre-Commit Keyboard Accessibility Test Checklist"]`

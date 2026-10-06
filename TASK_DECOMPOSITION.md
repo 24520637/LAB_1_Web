@@ -2084,47 +2084,55 @@ Performance Optimization & Lighthouse 100 Audit
 
 ### Objective
 
-Achieve a **100 Lighthouse score** in all four categories:
+Achieve **100/100 Lighthouse scores** in all four categories:
 
 * Performance
 * Accessibility
 * Best Practices
 * SEO
 
+Maintain **CLS = 0** and **LCP < 2.0s** under Fast 3G. The 375px mobile constraint is also explicitly validated, consistent with the existing T-02 requirement for zero horizontal scrolling at 375px.
+
 ### Scope
 
-* Optimize assets and resource loading.
-* Optimize CSS rendering.
-* Optimize font loading.
-* Reduce unnecessary **reflow/repaint**.
-* Validate performance under **Fast 3G** conditions.
+* Optimize assets and CSS rendering.
+* Optimize font loading using `font-display: swap` and `preload`.
+* Reduce unnecessary reflow/repaint.
+* Validate rendering at exactly **375px**.
+* Validate performance under **Fast 3G**.
+* Verify no horizontal overflow using:
+  `scrollWidth <= clientWidth`.
 
 ### Acceptance Criteria
 
-* [ ] Lighthouse score = **100/100** for Performance.
-* [ ] Lighthouse score = **100/100** for Accessibility.
-* [ ] Lighthouse score = **100/100** for Best Practices.
-* [ ] Lighthouse score = **100/100** for SEO.
+* [ ] Lighthouse = **100/100** for Performance.
+* [ ] Lighthouse = **100/100** for Accessibility.
+* [ ] Lighthouse = **100/100** for Best Practices.
+* [ ] Lighthouse = **100/100** for SEO.
 * [ ] **CLS = 0**.
 * [ ] **LCP < 2.0s** on Fast 3G.
-* [ ] Assets, CSS, fonts, and rendering are optimized.
-* [ ] No unnecessary reflow/repaint issues remain.
+* [ ] At **375px**, `scrollWidth <= clientWidth`.
+* [ ] No unintended horizontal scrolling or content clipping.
+* [ ] Fonts use `font-display: swap`.
+* [ ] Required fonts are preloaded where appropriate.
+* [ ] No unnecessary reflow/repaint remains.
 
 ### Mandatory Pre-Commit Test Checklist
 
-| Test           | Chrome DevTools Action               | Expected Result                             |
-| -------------- | ------------------------------------ | ------------------------------------------- |
-| Lighthouse     | Run Lighthouse audit                 | All 4 categories = **100**                  |
-| Fast 3G        | Lighthouse → Network → Fast 3G       | Performance targets remain satisfied        |
-| LCP            | Check Lighthouse/Performance metrics | **LCP < 2.0s**                              |
-| CLS            | Check Lighthouse/Performance metrics | **CLS = 0**                                 |
-| Assets         | Performance → Network                | No unnecessary/oversized assets             |
-| CSS            | Performance/Rendering inspection     | Efficient CSS rendering                     |
-| Fonts          | Network → Font resources             | Fonts load efficiently without layout shift |
-| Reflow/Repaint | Performance recording                | No unnecessary layout/repaint activity      |
-| Console        | DevTools → Console                   | No errors or performance-related warnings   |
+| Test           | Chrome DevTools Action                                                                  | Expected Result                                   |
+| -------------- | --------------------------------------------------------------------------------------- | ------------------------------------------------- |
+| Lighthouse     | Run full Lighthouse audit                                                               | All 4 categories = **100**                        |
+| Fast 3G        | Lighthouse → Network → Fast 3G                                                          | Performance targets pass                          |
+| LCP            | Lighthouse / Performance                                                                | **< 2.0s**                                        |
+| CLS            | Lighthouse / Performance                                                                | **0**                                             |
+| 375px viewport | Device Mode → `375px`                                                                   | No horizontal overflow                            |
+| Scroll width   | Console: `document.documentElement.scrollWidth <= document.documentElement.clientWidth` | **`true`**                                        |
+| Assets         | Performance → Network                                                                   | No unnecessary/oversized assets                   |
+| Fonts          | Inspect font CSS/network loading                                                        | `font-display: swap` and required preload present |
+| Reflow/Repaint | Performance recording                                                                   | No unnecessary layout/repaint activity            |
+| Console        | DevTools → Console                                                                      | No errors or performance-related warnings         |
 
-**Pre-commit rule:** Optimize → Run Lighthouse → Analyze Performance → Fix issues → Re-test all metrics → Commit only when all acceptance criteria pass.
+**Pre-commit rule:** Optimize → Test 375px → Test Fast 3G → Run Lighthouse → Inspect Performance → Fix failures → Re-test → Commit.
 
 ### Exact Git Commit
 
@@ -2132,4 +2140,3 @@ Achieve a **100 Lighthouse score** in all four categories:
 git add .
 git commit -m "perf: optimize assets"
 ```
-
